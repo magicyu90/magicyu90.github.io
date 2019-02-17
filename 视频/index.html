@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。 利用春节假期时间研究了些直播、视频推送相关的技术，今天打算总结一下。">
+<meta name="description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。">
 <meta name="keywords" content="直播">
 <meta property="og:type" content="article">
 <meta property="og:title" content="直播（一）">
 <meta property="og:url" content="http://blog.magicyu.com/视频/index.html">
 <meta property="og:site_name" content="Hugo的自由广场">
-<meta property="og:description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。 利用春节假期时间研究了些直播、视频推送相关的技术，今天打算总结一下。">
+<meta property="og:description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-02-17T13:12:05.835Z">
+<meta property="og:updated_time" content="2019-02-17T13:13:55.176Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="直播（一）">
-<meta name="twitter:description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。 利用春节假期时间研究了些直播、视频推送相关的技术，今天打算总结一下。">
+<meta name="twitter:description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。">
 
 
 
@@ -368,8 +368,8 @@
 
       
         <p>这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：<strong>设备视频采集和推送</strong>、<strong>流媒体服务器接收和转发</strong>、<strong>客户端播放视频</strong>，每部分涉及的知识也很多，所接触到的协议也很多。</p>
-<p>利用春节假期时间研究了些直播、视频推送相关的技术，今天打算总结一下。</p>
 <a id="more"></a>
+<p>利用春节假期时间研究了些直播、视频推送相关的技术，今天打算总结一下。</p>
 <h2 id="直播流程"><a href="#直播流程" class="headerlink" title="直播流程"></a>直播流程</h2><h3 id="采集"><a href="#采集" class="headerlink" title="采集"></a>采集</h3><p>简单地说，直播业务首先从采集开始，设备上（摄像头、手机等）从系统中（以API方式调用设备接口）获取原始视频数据，视频数据包括<strong>音频数据</strong>和<strong>图像数据</strong>。音频数据通过设备将环境中的模拟信号采集成PCM编码数据，PCM 脉冲编码调制是Pulse Code Modulation的缩写，主要将语音、图像等模拟信号实现数字化的脉冲编码调制技术。，然后压缩成对应的压缩格式数据并分发，如MP3、AAC、FLAC等都属于音频压缩格式。</p>
 <p>音频采集阶段，主要技术参数有：</p>
 <ul>
