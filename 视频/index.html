@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Hugo的自由广场">
 <meta property="og:description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-02-17T13:13:55.176Z">
+<meta property="og:updated_time" content="2019-02-18T15:12:40.873Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="直播（一）">
 <meta name="twitter:description" content="这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：设备视频采集和推送、流媒体服务器接收和转发、客户端播放视频，每部分涉及的知识也很多，所接触到的协议也很多。">
@@ -370,7 +370,8 @@
         <p>这几年，随着直播业的发展，直播相关的技术（视频推送、编解码、直播协议等）也越来越热。关于直播业务大体上包括三个主要部分：<strong>设备视频采集和推送</strong>、<strong>流媒体服务器接收和转发</strong>、<strong>客户端播放视频</strong>，每部分涉及的知识也很多，所接触到的协议也很多。</p>
 <a id="more"></a>
 <p>利用春节假期时间研究了些直播、视频推送相关的技术，今天打算总结一下。</p>
-<h2 id="直播流程"><a href="#直播流程" class="headerlink" title="直播流程"></a>直播流程</h2><h3 id="采集"><a href="#采集" class="headerlink" title="采集"></a>采集</h3><p>简单地说，直播业务首先从采集开始，设备上（摄像头、手机等）从系统中（以API方式调用设备接口）获取原始视频数据，视频数据包括<strong>音频数据</strong>和<strong>图像数据</strong>。音频数据通过设备将环境中的模拟信号采集成PCM编码数据，PCM 脉冲编码调制是Pulse Code Modulation的缩写，主要将语音、图像等模拟信号实现数字化的脉冲编码调制技术。，然后压缩成对应的压缩格式数据并分发，如MP3、AAC、FLAC等都属于音频压缩格式。</p>
+<hr>
+<h3 id="直播流程一：采集"><a href="#直播流程一：采集" class="headerlink" title="直播流程一：采集"></a>直播流程一：采集</h3><p>简单地说，直播业务首先从采集开始，设备上（摄像头、手机等）从系统中（以API方式调用设备接口）获取原始视频数据，视频数据包括<strong>音频数据</strong>和<strong>图像数据</strong>。音频数据通过设备将环境中的模拟信号采集成PCM编码数据，PCM 脉冲编码调制是Pulse Code Modulation的缩写，主要将语音、图像等模拟信号实现数字化的脉冲编码调制技术。然后压缩成对应的压缩格式数据并分发，如MP3、AAC、FLAC等都属于音频压缩格式。</p>
 <p>音频采集阶段，主要技术参数有：</p>
 <ul>
 <li>采样率（samplerate）：采样就是把模拟信号数字化的过程，采样频率越高，记录这一段音频信号所用的数据量就越大，同时音频质量也就越高。在ffmpeg中我们通过-ar参数来设置采样率，采样率的单位是赫兹(Hz)。</li>
@@ -384,10 +385,26 @@
 <li>分辨率：随着设备屏幕尺寸的日益增多，视频采集过程中原始视频分辨率起着越来越重要的作用，后续处理环节中使用的所有视频分辨率的定义都以原始视频分辨率为基础。视频采集卡能支持的最大点阵反映了其分辨率的性能。</li>
 <li>采样频率：采样频率反映了采集卡处理图像的速度和能力。在进行高度图像采集时，需要注意采集卡的采样频率是否满足要求。采样率越高，图像质量越高，同时保存这些图像信息的数据量也越大。</li>
 </ul>
-<h3 id="如何采集"><a href="#如何采集" class="headerlink" title="如何采集?"></a>如何采集?</h3><h4 id="1-摄像头采集"><a href="#1-摄像头采集" class="headerlink" title="1. 摄像头采集"></a>1. 摄像头采集</h4><p>比如大华、海康厂商的监控摄像头，这些摄像头配合厂商提供的APP（海康萤石云视频等）进行监控，当然这些摄像头也会提供对应监控RTSP地址。
-对于手机来说，一些技术和SDK支持摄像头采集。</p>
+<h3 id="如何采集"><a href="#如何采集" class="headerlink" title="如何采集?"></a>如何采集?</h3><h4 id="1-摄像头采集"><a href="#1-摄像头采集" class="headerlink" title="1. 摄像头采集"></a>1. 摄像头采集</h4><p>比如大华、海康厂商的监控摄像头，这些摄像头配合厂商提供的APP（海康萤石云视频等）进行监控，当然这些摄像头也会提供对应监控RTSP地址。对于手机来说，业界有些技术和SDK支持摄像头的采集。这里以Android为例，罗列可用的技术方案。Android端推流方案大体包括两大类：1. 利用FFmpeg进行直播推流 2. 利用开源项目和SDK</p>
+<ul>
+<li><a href="https://github.com/EasyDarwin/EasyPusher" target="_blank" rel="noopener">EasyPusher RTSP推流SDK</a>：支持RTSP</li>
+<li><a href="https://github.com/EasyDSS/EasyRTMP-Android" target="_blank" rel="noopener">EasyRTMP-Android</a></li>
+<li><a href="https://developer.qiniu.com/pili/sdk/1210/the-android-client-sdk" target="_blank" rel="noopener">七牛播放端SDK</a></li>
+<li><a href="https://www.jianshu.com/p/3c479c0f4876" target="_blank" rel="noopener">MediaCodec做直播推流</a>:需使用LibRtmp将视频数据封成RTMP包</li>
+<li><a href="https://www.jianshu.com/p/3c479c0f4876" target="_blank" rel="noopener">Yasea直播推流</a>:效率高、延迟低</li>
+</ul>
 <h4 id="2-视频文件推流"><a href="#2-视频文件推流" class="headerlink" title="2. 视频文件推流"></a>2. 视频文件推流</h4><p>比如使用ffmpeg软件将一个视频或音频文件以直播流（RTMP、RTSP）的形式推送。</p>
-<p>未完待续！！！</p>
+<hr>
+<h3 id="直播流程二：流媒体服务器接受和转发"><a href="#直播流程二：流媒体服务器接受和转发" class="headerlink" title="直播流程二：流媒体服务器接受和转发"></a>直播流程二：流媒体服务器接受和转发</h3><p>流媒体服务器是流媒体应用的核心系统，主要功能是对流媒体内容采集、存储和转发，并以流式协议（RTSP、RTMP)将视频文件传输到客户端（Web、PC、手机等）。这里不得不提下大名鼎鼎的Adobe公司及其Flash播放器（Flash的装机量以达到99%以上），直播常用到的RTMP协议即为Adobe公司为Flash和服务器间数据传输所开发的协议，如果想使用RTMP做直播的话，前提需要安装并打开Flash。但是关于Flash的诟病（兼容性、后续支持）也是不少的。</p>
+<p>常见的流媒体服务器有：</p>
+<ul>
+<li><a href="https://github.com/Red5/red5-server" target="_blank" rel="noopener">Red5流媒体服务器</a></li>
+<li><a href="https://github.com/EasyDarwin/EasyDarwin" target="_blank" rel="noopener">EasyDarwin服务器</a></li>
+<li><a href="https://github.com/arut/nginx-rtmp-module" target="_blank" rel="noopener">nginx+rtmp_module</a></li>
+<li><a href="https://github.com/rgaufman/live555" target="_blank" rel="noopener">Live555流媒体</a></li>
+<li><a href="https://github.com/EasyDSS/EasyDSS" target="_blank" rel="noopener">EasyDSS流媒体服务器</a></li>
+<li><a href="https://github.com/wowzamediasystems" target="_blank" rel="noopener">Wowza流媒体</a></li>
+</ul>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><hr>
 <ul>
 <li><a href="https://zhuanlan.zhihu.com/p/22502905" target="_blank" rel="noopener">视频直播技术详解」系列之一：采集</a></li>
@@ -636,7 +653,7 @@ var jiathis_config={
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#直播流程"><span class="nav-number">1.</span> <span class="nav-text">直播流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#采集"><span class="nav-number">1.1.</span> <span class="nav-text">采集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何采集"><span class="nav-number">1.2.</span> <span class="nav-text">如何采集?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-摄像头采集"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 摄像头采集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-视频文件推流"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 视频文件推流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#直播流程一：采集"><span class="nav-number">1.</span> <span class="nav-text">直播流程一：采集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何采集"><span class="nav-number">2.</span> <span class="nav-text">如何采集?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-摄像头采集"><span class="nav-number">2.1.</span> <span class="nav-text">1. 摄像头采集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-视频文件推流"><span class="nav-number">2.2.</span> <span class="nav-text">2. 视频文件推流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直播流程二：流媒体服务器接受和转发"><span class="nav-number">3.</span> <span class="nav-text">直播流程二：流媒体服务器接受和转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
