@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="BSON,">
+  <meta name="keywords" content="socketio,websocket,">
 
 
 
@@ -79,21 +79,20 @@
 
 
 
-<meta name="description" content="我们都使用过JSON，也听说过BSON（Binary Serialized Document Format）是一种基于二进制形式的存储格式，具有轻量性、高效性的特点，可是为什么它很高效呢，为什么MongoDB会选择使用这种事格式来存储数据呢，跟着本文一探究竟吧。">
-<meta name="keywords" content="BSON">
+<meta name="description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。">
+<meta name="keywords" content="socketio,websocket">
 <meta property="og:type" content="article">
-<meta property="og:title" content="你了解BSON吗">
-<meta property="og:url" content="http://blog.magicyu.cn/bson/index.html">
+<meta property="og:title" content="flask_socketio深入探究">
+<meta property="og:url" content="http://blog.magicyu.cn/flask-socketio/index.html">
 <meta property="og:site_name" content="Hugo的自由广场">
-<meta property="og:description" content="我们都使用过JSON，也听说过BSON（Binary Serialized Document Format）是一种基于二进制形式的存储格式，具有轻量性、高效性的特点，可是为什么它很高效呢，为什么MongoDB会选择使用这种事格式来存储数据呢，跟着本文一探究竟吧。">
+<meta property="og:description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://blog.magicyu.cn/bson/bson1.jpg">
-<meta property="og:image" content="http://blog.magicyu.cn/bson/bson.png">
-<meta property="og:updated_time" content="2017-01-22T22:51:54.000Z">
+<meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/1.jpg">
+<meta property="og:updated_time" content="2019-05-04T10:01:08.058Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="你了解BSON吗">
-<meta name="twitter:description" content="我们都使用过JSON，也听说过BSON（Binary Serialized Document Format）是一种基于二进制形式的存储格式，具有轻量性、高效性的特点，可是为什么它很高效呢，为什么MongoDB会选择使用这种事格式来存储数据呢，跟着本文一探究竟吧。">
-<meta name="twitter:image" content="http://blog.magicyu.cn/bson/bson1.jpg">
+<meta name="twitter:title" content="flask_socketio深入探究">
+<meta name="twitter:description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。">
+<meta name="twitter:image" content="http://blog.magicyu.cn/flask-socketio/1.jpg">
 
 
 
@@ -123,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://blog.magicyu.cn/bson/">
+  <link rel="canonical" href="http://blog.magicyu.cn/flask-socketio/">
 
 
 
 
 
-  <title>你了解BSON吗 | Hugo的自由广场</title>
+  <title>flask_socketio深入探究 | Hugo的自由广场</title>
   
 
 
@@ -266,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/bson/">
+    <link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/flask-socketio/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="育子">
@@ -283,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">你了解BSON吗</h1>
+          <h1 class="post-title" itemprop="name headline">flask_socketio深入探究</h1>
         
 
         <div class="post-meta">
@@ -295,8 +294,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-19T16:58:34+08:00">
-                2017-01-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-04T17:04:56+08:00">
+                2019-05-04
               </time>
             
 
@@ -318,8 +317,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/理解计算机/" itemprop="url" rel="index">
-                    <span itemprop="name">理解计算机</span>
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
                   </a>
                 </span>
 
@@ -336,8 +335,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/bson/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="bson/" itemprop="commentCount"></span>
+                <a href="/flask-socketio/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="flask-socketio/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -370,49 +369,20 @@
       
 
       
-        <p>我们都使用过JSON，也听说过BSON（Binary Serialized Document Format）是一种基于二进制形式的存储格式，具有轻量性、高效性的特点，可是为什么它很高效呢，为什么MongoDB会选择使用这种事格式来存储数据呢，跟着本文一探究竟吧。</p>
+        <p>在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。</p>
 <a id="more"></a>
-<h4 id="BSON-格式"><a href="#BSON-格式" class="headerlink" title="BSON 格式"></a>BSON 格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;Name&quot;:&quot;Hugo&quot;,</span><br><span class="line">  &quot;Age&quot;:25,</span><br><span class="line">  &quot;Address&quot;: [&quot;8 Rue Sevin&quot;,&quot;3 Rue Tronchet&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上述例子就是一个最简单的BSON存储格式，外面的”{}”来告诉BSON解释其这是一个Document，我之所以说成Document是为了让你联想到MongoDB，因为MongoDB也是用Document存储数据的。在一个Document中包含着若干个element-元素，每个Element由3部分组成，<strong>名称</strong>，<strong>类型</strong>，<strong>值</strong>，上面例子中”Name”就是element的名称，”Hugo”就是这个element的值，BSON所支持的类型包括：</p>
+<p>flask-socketio是flask技术栈中关于WebSocket的解决方案，<a href="https://zh.wikipedia.org/wiki/WebSocket" target="_blank" rel="noopener">WebSocket</a>是一种在单个TCP连接上进行全双工通信的协议，它帮助客户端与服务器之间建立稳定的长连接会话，传递消息。本次不涉及WebSocket的深入探讨，主要想分享写flask-socketio的实践经验。</p>
+<h4 id="部署方式"><a href="#部署方式" class="headerlink" title="部署方式"></a>部署方式</h4><p>项目初期，flask-socketio是通过gunicorn(单工作者)+nginx+supervisor的方式进行部署，nginx使用ip_hash的方式进行负载均衡。有一次在和同事聊天过程中，讨论到基于ip_hash的方式可能对于在互联网上进行访问的话效果不好，没法做到真正的负载均衡，设想下，一个局域网内有若干台客户端访问服务器，如果基于ip_hash的话，nginx很可能将这些客户端都指向同一台服务器，因为他们的公网ip是一样的。访问过程如下：</p>
+<p>192.168.0.101(用户电脑ip)-&gt;192.168.0.1/116.1.2.3(路由器的局域网ip及路由器得到的电信公网ip)–&gt;119.147.19.234(负载均衡的nginx服务器)–&gt;192.168.126.127(业务应用服务器)。</p>
+<p>为了做到真正的负载均衡，因此将目前项目中nginx的ip_hash方式替换为nginx-sticky-module，sticky就是基于cookie的一种负载均衡解决方案，通过cookie实现客户端与后端服务器的会话保持, 在一定条件下可以保证同一个客户端访问的都是同一个后端服务器。请求来了，服务器发个cookie，并说：下次来带上，直接来找我。该模块支持粘性会话的同时(客户端保持和同一台服务器进行会话访问)可以做到水平扩展。</p>
+<p>理想的flask-socketio架构图：</p>
+<img src="/flask-socketio/1.jpg" title="架构图">
+<p>它可以保证即使在同一个局域网内的计算机，也可以访问不同的应用服务器，方便以后进行水平扩展。在这里注意的是，在使用gunicorn进行部署的时候，由于gunicorn多工作者(workers)不支持粘性会话，因此运行gunicorn时候确保只有一个工作者启用，启动命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gunicorn --worker-class eventlet -w 1 module:app</span><br></pre></td></tr></table></figure>
+<p>参考架构图，我们使用的部署方式是nginx作为负载平衡器，使用nginx-sticky(基于cookie)路由，在每一个应用服务器上都运行一个gunicorn进程，每个gunicorn进行使用<strong>单worker</strong>启动。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><hr>
 <ul>
-<li>String</li>
-<li>Interger（Int32 和Int64）</li>
-<li>double（64位）</li>
-<li>date（UTC格式）</li>
-<li>byte数组</li>
-<li>boolean</li>
-<li>null</li>
-<li>BSON object</li>
-<li>BSON array</li>
-<li>JavaScript Code</li>
-<li>正则表达式</li>
-</ul>
-<h4 id="高效性"><a href="#高效性" class="headerlink" title="高效性"></a>高效性</h4><p>跟JSON相比，BSON最初的设计方案就是为了提高数据检索的，特别对于一个很大的Document来说，BSON就有很高的检索速度，BSON在存储数据时候会记录长度前缀-length prefix和explicit array indice-明确的说明。</p>
-<h4 id="存储类型"><a href="#存储类型" class="headerlink" title="存储类型"></a>存储类型</h4><p>BSON最新的1.1版本中，一共定义了6个类型来序列化数据存储到计算机中。<code>byte,int32,int64,uint64,double,decimal128</code>。比较常用的是前四种。在存储数据的时候使用的是little-endian-小端存储，即低位字节存放在较低的存储器地址,<a href="http://blog.magicyu.com/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81/" target="_blank" rel="noopener">了解更多</a>。</p>
-<h4 id="存储规则"><a href="#存储规则" class="headerlink" title="存储规则"></a>存储规则</h4><p>根据BSON规则，一个Document被分解成三部分，<strong>Int32，e_list，”\x00”</strong>。</p>
-<ul>
-<li>Int32：记录该Document的总长度，使用Int32存储，占用了4个字节，这个总长度也包括了Int32本身的长度，安小端排序存储。</li>
-<li>e_list：作为BSON规则中的一个中间内容，它包括两部分，<strong>element,e_list</strong>，注意这里要有递归思想，解释器肯定是依次解释element的，对于还没有进行解释的，BSON称之为e_list，这是一个<strong>中间形式</strong>，解释器的最终结果是把document中的element都解释出来。</li>
-<li>“\x00”：这个16进制相当于一个结束符，表示该部分解释已经结束。</li>
-</ul>
-<h5 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h5><p>我使用ASP.NET Web API输出一个BSON数据，通过Fiddler可以看出其结果的Hexstring。</p>
-<img src="/bson/bson1.jpg" title="BSON结果">
-<p>绿色部分是Http Response中的Header部分，黑色部分是Body部分。我们首先自己试着解析出结果，看能否与输出结果匹配。</p>
-<p>对于<code>&quot;Name&quot;:&quot;Hugo&quot;</code>，首先根据BSON规则，</p>
-<img src="/bson/bson.png" title="BSON规则">
-<p>element需要解析成 <strong>数据类型部分  e_name  值</strong>三部分，因为这个element是个string类型，因此数据类型部分被解释成”\x02”，e_name需要解释成cstring，
-然后cstrig又被解释成(byte<em>) “\x00”，byte</em>代表一个或多个byte，查询ASCII码表，知道Name为4E 61 6D 65，加上\x00，完整的Name为4E 61 6D 65 00，
-值等于string，string又被解释成int32 (byte*) “\x00”，
-分别代表字符串的个数+1（+1是因为算上”\x00”结束符），每个字符对应的UTF8编码，结束符。值是Hugo，
-被解析成05 00 00 00 48 75 67 6F 00，<strong>注意</strong>Int32总是按<strong>4个字节小端存储</strong>。
-一个完整的Name对应的16进制字符串是<code>02 4E 61 6D 65 00 05 00 00 00 48 75 67 6F 00</code> 和 Fiddler给出的结果完全匹配。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>由于每个元素的长度都存储在元素的头部，因此可以根据这个长度直接进行seek到指定的点上就可以读到内容了，这就是为什么遍历速度快！额外的存储空间是BSON一个劣势势，比如对{“field”:2}，在JSON的存储上7只使用了一个字节，而如果用BSON，那就是至少4个字节（32位），因为BSON没有Int 16类型，哈哈。</p>
-<p>JSON是一个很方便的数据交换格式，但是其类型比较有限。BSON在其基础上增加了“byte array”数据类型。这使得二进制的存储不再需要先base64转换后再存成JSON。大大减少了计算开销和数据大小。</p>
-<p>对于BSON的设计，确实达到了这三点目标：<strong>更快的遍历速度、操作更简易、增加了额外的数据类型</strong></p>
-<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><hr>
-<ul>
-<li><a href="http://bsonspec.org/" target="_blank" rel="noopener">BSON官方文档</a></li>
-<li><a href="http://blog.nosqlfan.com/html/2914.html" target="_blank" rel="noopener">BSON特性探讨及基于其特性的MongoDB优化</a></li>
+<li><a href="https://blog.csdn.net/yu870646595/article/details/52056340" target="_blank" rel="noopener">Nginx Sticky的使用及踩过的坑（nginx-sticky-module）</a></li>
 </ul>
 
       
@@ -431,7 +401,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/BSON/" rel="tag"># BSON</a>
+            <a href="/tags/socketio/" rel="tag"># socketio</a>
+          
+            <a href="/tags/websocket/" rel="tag"># websocket</a>
           
         </div>
       
@@ -444,8 +416,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/webapi1/" rel="next" title="ASP.NET Web API-路由篇">
-                <i class="fa fa-chevron-left"></i> ASP.NET Web API-路由篇
+              <a href="/视频/" rel="next" title="直播（一）">
+                <i class="fa fa-chevron-left"></i> 直播（一）
               </a>
             
           </div>
@@ -453,10 +425,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/async/" rel="prev" title="Async 和 Await总结">
-                Async 和 Await总结 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -662,7 +630,7 @@ var jiathis_config={
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#BSON-格式"><span class="nav-number">1.</span> <span class="nav-text">BSON 格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高效性"><span class="nav-number">2.</span> <span class="nav-text">高效性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存储类型"><span class="nav-number">3.</span> <span class="nav-text">存储类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存储规则"><span class="nav-number">4.</span> <span class="nav-text">存储规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#举例说明"><span class="nav-number">4.1.</span> <span class="nav-text">举例说明</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#部署方式"><span class="nav-number">1.</span> <span class="nav-text">部署方式</span></a></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number"></span> <span class="nav-text">参考资料</span></a></li></div>
             
 
           </div>
@@ -839,9 +807,9 @@ var jiathis_config={
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://blog.magicyu.cn/bson/';
-          this.page.identifier = 'bson/';
-          this.page.title = '你了解BSON吗';
+          this.page.url = 'http://blog.magicyu.cn/flask-socketio/';
+          this.page.identifier = 'flask-socketio/';
+          this.page.title = 'flask_socketio深入探究';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://hugoshen.disqus.com/embed.js';
