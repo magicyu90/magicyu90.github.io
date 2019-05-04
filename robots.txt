@@ -13,5 +13,5 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: http://blog.magicyu.com/sitemap.xml
-Sitemap: http://blog.magicyu.com/baidusitemap.xml
+Sitemap: http://blog.magicyu.cn/sitemap.xml
+Sitemap: http://blog.magicyu.cn/baidusitemap.xml
