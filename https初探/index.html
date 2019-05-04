@@ -94,7 +94,7 @@
 <meta property="og:image" content="http://blog.magicyu.cn/https初探/5.png">
 <meta property="og:image" content="http://blog.magicyu.cn/https初探/6.png">
 <meta property="og:image" content="http://blog.magicyu.cn/https初探/7.png">
-<meta property="og:updated_time" content="2019-05-04T09:40:42.859Z">
+<meta property="og:updated_time" content="2019-05-04T10:15:51.208Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="https初探">
 <meta name="twitter:description" content="HTTPS作为Web开发中必不可缺的一个重要知识点，我今天打算总结一下。 HTTPS（全称：Hyper Text Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。 HTTPS可以说是HTTP的一个强化版本，加强的部分">
@@ -400,8 +400,8 @@ HTTPS可以说是HTTP的一个强化版本，加强的部分主要是对于传�
 </ol>
 <p>上面过程的前两步，又称为”握手阶段”（handshake）。
 由于证书中使用公约加密信息的计算量太大，因此客户端和服务器端协商生成一个对话秘钥，使用对话秘钥对以后传输的信息进行加密，减少了使用证书公钥耗用的时间，但是协商秘钥期间，会使用证书的公钥进行加密传输。</p>
-<h2 id="实战说明：测试与pro-ihealthlabs-com进行连接-使用WireShark进行抓包分析"><a href="#实战说明：测试与pro-ihealthlabs-com进行连接-使用WireShark进行抓包分析" class="headerlink" title="实战说明：测试与pro.ihealthlabs.com进行连接 使用WireShark进行抓包分析"></a>实战说明：测试与pro.ihealthlabs.com进行连接 使用<strong>WireShark</strong>进行抓包分析</h2><h3 id="第一步：TCP三次握手"><a href="#第一步：TCP三次握手" class="headerlink" title="第一步：TCP三次握手"></a>第一步：TCP三次握手</h3><p>位码即tcp标志位，有6种标示：SYN(synchronous建立联机) ACK(acknowledgement 确认) PSH(push传送) FIN(finish结束) RST(reset重置) URG(urgent紧急)
-tcp包重要信息：Sequence number(顺序号码) Acknowledge number(确认号码)</p>
+<h2 id="实战说明：测试与pro-ihealthlabs-com进行连接-使用WireShark进行抓包分析"><a href="#实战说明：测试与pro-ihealthlabs-com进行连接-使用WireShark进行抓包分析" class="headerlink" title="实战说明：测试与pro.ihealthlabs.com进行连接 使用WireShark进行抓包分析"></a>实战说明：测试与pro.ihealthlabs.com进行连接 使用<strong>WireShark</strong>进行抓包分析</h2><h3 id="第一步：TCP三次握手"><a href="#第一步：TCP三次握手" class="headerlink" title="第一步：TCP三次握手"></a>第一步：TCP三次握手</h3><p>位码即tcp标志位，有6种标示：SYN(synchronous建立联机) ACK(acknowledgement 确认) PSH(push传送) FIN(finish结束) RST(reset重置) URG(urgent紧急)</p>
+<p>tcp包重要信息：Sequence number(顺序号码) Acknowledge number(确认号码)</p>
 <p><strong>第一次握手</strong>:客户端192.168.1.31 发送位码syn包，并随机产生一个seq number=0(由于wireshark为了便于观察，初始化这个随机值为0,后面的seq和ack都在此基础上累加)
 <strong>第二次握手</strong>:pro主机54.76.150.159 收到syn包之后，必须确认客户端的syn包，发送ack包，因此添加位码ack number=1(上一步的seq number+1) ,ack=1 并随机一个seq number=0回复给客户端
 <strong>第三次握手</strong>:客户端发送确认包 ack number=1 (上一步的seq number+1) 和ack=1发送给服务器，完成三次握手。 客户端与服务器开始进入https重要环节，协商秘钥。</p>
