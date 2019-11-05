@@ -83,14 +83,17 @@
 <meta name="keywords" content="pandas">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Pandas使用-Group操作 (一)">
-<meta property="og:url" content="http://blog.magicyu.cn/pandas/index.html">
+<meta property="og:url" content="http://blog.magicyu.cn/pandas-learn/index.html">
 <meta property="og:site_name" content="Hugo的自由广场">
 <meta property="og:description" content="Pandas 是非常著名的开源数据处理库，我们可以通过它完成对数据集进行快速读取、转换、过滤、分析等一系列操作。本文会把平时里常用的Pandas操作进行总结。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-05T10:23:46.000Z">
+<meta property="og:image" content="http://blog.magicyu.cn/pandas-learn/1.png">
+<meta property="og:image" content="http://blog.magicyu.cn/pandas-learn/2.png">
+<meta property="og:updated_time" content="2019-11-05T15:13:54.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Pandas使用-Group操作 (一)">
 <meta name="twitter:description" content="Pandas 是非常著名的开源数据处理库，我们可以通过它完成对数据集进行快速读取、转换、过滤、分析等一系列操作。本文会把平时里常用的Pandas操作进行总结。">
+<meta name="twitter:image" content="http://blog.magicyu.cn/pandas-learn/1.png">
 
 
 
@@ -120,7 +123,7 @@
 
 
 
-  <link rel="canonical" href="http://blog.magicyu.cn/pandas/">
+  <link rel="canonical" href="http://blog.magicyu.cn/pandas-learn/">
 
 
 
@@ -263,7 +266,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/pandas/">
+    <link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/pandas-learn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="育子">
@@ -333,8 +336,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/pandas/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="pandas/" itemprop="commentCount"></span>
+                <a href="/pandas-learn/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="pandas-learn/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -394,11 +397,11 @@
 <p>counts()和value_counts()方法可以用来快速确定DataFrame的大小。</p>
 <h3 id="Grouper操作"><a href="#Grouper操作" class="headerlink" title="Grouper操作"></a>Grouper操作</h3><p>首先，我们从网上把数据下载下来，后面的操作都是基于这份数据的：
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">In [1]: import pandas as pd</span><br><span class="line">In [2]: df = pd.read_excel(&quot;https://github.com/chris1610/pbpython/blob/master/data/sample-salesv3.xlsx?raw=True&quot;)</span><br><span class="line">In [3]: df</span><br></pre></td></tr></table></figure></p>
-
+<img src="/pandas-learn/1.png">
 <p>下面，我们统计’ext price’这个属性在每个月的累和(sum)值，resample 只有在index为<strong>date</strong>类型的时候才能用：
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [17]: df.set_index(&apos;date&apos;).resample(&apos;M&apos;)[&apos;ext price&apos;].sum()</span><br><span class="line">Out[17]: </span><br><span class="line">date</span><br><span class="line">2014-01-31    185361.66</span><br><span class="line">2014-02-28    146211.62</span><br><span class="line">2014-03-31    203921.38</span><br><span class="line">2014-04-30    174574.11</span><br><span class="line">2014-05-31    165418.55</span><br><span class="line">2014-06-30    174089.33</span><br><span class="line">2014-07-31    191662.11</span><br><span class="line">2014-08-31    153778.59</span><br><span class="line">2014-09-30    168443.17</span><br><span class="line">2014-10-31    171495.32</span><br><span class="line">2014-11-30    119961.22</span><br><span class="line">2014-12-31    163867.26</span><br><span class="line">Freq: M, Name: ext price, dtype: float64</span><br></pre></td></tr></table></figure></p>
 <p>另外关于resample中用到的<strong>M</strong>代表的是聚合时间参数rule，一般是时间参数，比如“M”，“A”，“Q”，“BM”，“BA”，“BQ”和“W”。
-</p>
+<img src="/pandas-learn/2.png" title="时间聚合参数"></p>
 <p>如果我们想知道每个用户每个月的sum值，那么就需要一个groupby了：
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">In [20]: df.set_index(&apos;date&apos;).groupby(&apos;name&apos;)[&apos;ext price&apos;].resample(&apos;M&apos;).sum()</span><br><span class="line">Out[20]: </span><br><span class="line">name                             date      </span><br><span class="line">Barton LLC                       2014-01-31     6177.57</span><br><span class="line">                                 2014-02-28    12218.03</span><br><span class="line">                                 2014-03-31     3513.53</span><br><span class="line">                                 2014-04-30    11474.20</span><br><span class="line">                                 2014-05-31    10220.17</span><br><span class="line">                                 2014-06-30    10463.73</span><br><span class="line">                                 2014-07-31     6750.48</span><br><span class="line">                                 2014-08-31    17541.46</span><br><span class="line">                                 2014-09-30    14053.61</span><br><span class="line">                                 2014-10-31     9351.68</span><br><span class="line">                                 2014-11-30     4901.14</span><br><span class="line">                                 2014-12-31     2772.90</span><br><span class="line">Cronin, Oberbrunner and Spencer  2014-01-31     1141.75</span><br><span class="line">                                 2014-02-28    13976.26</span><br><span class="line">                                 2014-03-31    11691.62</span><br><span class="line">                                 2014-04-30     3685.44</span><br><span class="line">                                 2014-05-31     6760.11</span><br><span class="line">                                 2014-06-30     5379.67</span><br><span class="line">                                 2014-07-31     6020.30</span><br><span class="line">                                 2014-08-31     5399.58</span><br><span class="line">                                 2014-09-30    12693.74</span><br><span class="line">                                 2014-10-31     9324.37</span><br><span class="line">                                 2014-11-30     6021.11</span><br><span class="line">                                 2014-12-31     7640.60</span><br></pre></td></tr></table></figure></p>
 <p>以上写法不是很直观，可以使用<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html" target="_blank" rel="noopener">Grouper</a>写得更加简洁：
@@ -437,8 +440,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/pandas-learn/" rel="next" title="Pandas使用-Group操作 (一)">
-                <i class="fa fa-chevron-left"></i> Pandas使用-Group操作 (一)
+              <a href="/flask-socketio/" rel="next" title="flask_socketio深入探究">
+                <i class="fa fa-chevron-left"></i> flask_socketio深入探究
               </a>
             
           </div>
@@ -446,6 +449,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/pandas/" rel="prev" title="Pandas使用-Group操作 (一)">
+                Pandas使用-Group操作 (一) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -828,8 +835,8 @@ var jiathis_config={
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://blog.magicyu.cn/pandas/';
-          this.page.identifier = 'pandas/';
+          this.page.url = 'http://blog.magicyu.cn/pandas-learn/';
+          this.page.identifier = 'pandas-learn/';
           this.page.title = 'Pandas使用-Group操作 (一)';
         };
         var d = document, s = d.createElement('script');
