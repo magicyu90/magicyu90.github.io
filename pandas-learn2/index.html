@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="申育,IT笔记">
+  <meta name="keywords" content="pandas,">
 
 
 
@@ -79,16 +79,20 @@
 
 
 
-<meta name="description" content="有一颗写手之心的IT文艺青年">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hugo的自由广场">
-<meta property="og:url" content="http://blog.magicyu.cn/tags/直播/index.html">
+<meta name="description" content="本文主要以Pandas的案例进行讲解，并介绍在平时使用过程中的一些小技巧。">
+<meta name="keywords" content="pandas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pandas使用 (二)">
+<meta property="og:url" content="http://blog.magicyu.cn/pandas-learn2/index.html">
 <meta property="og:site_name" content="Hugo的自由广场">
-<meta property="og:description" content="有一颗写手之心的IT文艺青年">
+<meta property="og:description" content="本文主要以Pandas的案例进行讲解，并介绍在平时使用过程中的一些小技巧。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.magicyu.cn/pandas-learn2/axis.png">
+<meta property="og:updated_time" content="2019-11-06T14:40:38.323Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hugo的自由广场">
-<meta name="twitter:description" content="有一颗写手之心的IT文艺青年">
+<meta name="twitter:title" content="Pandas使用 (二)">
+<meta name="twitter:description" content="本文主要以Pandas的案例进行讲解，并介绍在平时使用过程中的一些小技巧。">
+<meta name="twitter:image" content="http://blog.magicyu.cn/pandas-learn2/axis.png">
 
 
 
@@ -118,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://blog.magicyu.cn/tags/直播/">
+  <link rel="canonical" href="http://blog.magicyu.cn/pandas-learn2/">
 
 
 
 
 
-  <title>标签: 直播 | Hugo的自由广场</title>
+  <title>Pandas使用 (二) | Hugo的自由广场</title>
   
 
 
@@ -143,7 +147,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -247,52 +251,215 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>直播<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/pandas-learn2/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="育子">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hugo的自由广场">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/视频/" itemprop="url">
-              
-                <span itemprop="name">直播（一）</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Pandas使用 (二)</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-02-17T19:31:29+08:00" content="2019-02-17">
-          02-17
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-01T13:58:25+08:00">
+                2019-11-01
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/pandas-learn2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="pandas-learn2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要以Pandas的案例进行讲解，并介绍在平时使用过程中的一些小技巧。</p>
+<a id="more"></a>
+<h3 id="Axis-轴的概念"><a href="#Axis-轴的概念" class="headerlink" title="Axis-轴的概念"></a>Axis-轴的概念</h3><p>axis：按那个方向检索 0：按逐行索引向下走 1;按逐列 向右走
+在drop中使用axis=1实际上是删掉了一列，而在mean中实际上是计算的行平均值，而不是列的平均值。
+实际上axis = 1，指的是沿着行求所有列的平均值，代表了横轴，那axis = 0，就是沿着列求所有行的平均值，代表了纵轴。
+<img src="/pandas-learn2/axis.png" title="示意图"></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pandas/" rel="tag"># pandas</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/pandas-learn/" rel="next" title="Pandas使用 (一)">
+                <i class="fa fa-chevron-left"></i> Pandas使用 (一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
 
 
           </div>
@@ -300,6 +467,20 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -320,8 +501,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -419,6 +609,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Axis-轴的概念"><span class="nav-number">1.</span> <span class="nav-text">Axis-轴的概念</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -566,6 +772,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
@@ -583,6 +793,18 @@
       <script id="dsq-count-scr" src="https://hugoshen.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://blog.magicyu.cn/pandas-learn2/';
+          this.page.identifier = 'pandas-learn2/';
+          this.page.title = 'Pandas使用 (二)';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://hugoshen.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   
