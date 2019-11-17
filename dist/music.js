@@ -10,7 +10,7 @@ const ap = new APlayer({
       {
           name: '沙滩恋曲',
           artist: '头文字D 电影原声',
-          url: 'music.163.com/outchain/player?type=2&id=27591663&auto=1&height=66',
+          url: 'https://music.163.com/outchain/player?type=2&id=27591663&auto=1&height=66',
           cover: 'https://p2.music.126.net/9KeyafHLjadqSQTRS_tN5Q==/5741649720318487.jpg?param=90y90',
       }
   ]
