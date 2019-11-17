@@ -10,7 +10,7 @@ const ap = new APlayer({
       {
           name: '沙滩恋曲',
           artist: '头文字D 电影原声',
-          url: 'http://m10.music.126.net/20191117234723/72d070f25fb5720679088f37266555fa/ymusic/e303/dfbe/913c/f3628c355995d4a76158060fdd8280ac.mp3',
+          url: 'https://win-web-ra01-sycdn.kuwo.cn/c7822a134b1d2d6b338c92c01907e832/5dd17566/resource/n1/128/57/69/3172436728.mp3',
           cover: 'https://p2.music.126.net/9KeyafHLjadqSQTRS_tN5Q==/5741649720318487.jpg?param=90y90',
       }
   ]
