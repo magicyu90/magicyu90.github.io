@@ -105,7 +105,7 @@
     root: '/',
     scheme: 'Mist',
     version: '5.1.4',
-    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
     fancybox: true,
     tabs: true,
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
@@ -415,6 +415,10 @@
 
     
 
+    <div>
+      
+    </div>
+
     <footer class="post-footer">
       
 
@@ -593,6 +597,10 @@
 
     
 
+    <div>
+      
+    </div>
+
     <footer class="post-footer">
       
 
@@ -769,6 +777,10 @@
     
 
     
+
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
       
@@ -947,6 +959,10 @@
 
     
 
+    <div>
+      
+    </div>
+
     <footer class="post-footer">
       
 
@@ -1124,6 +1140,10 @@
 
     
 
+    <div>
+      
+    </div>
+
     <footer class="post-footer">
       
 
@@ -1300,6 +1320,10 @@
     
 
     
+
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
       
@@ -1480,6 +1504,10 @@ HTTPS可以说是HTTP的一个强化版本，加强的部分主要是对于传�
 
     
 
+    <div>
+      
+    </div>
+
     <footer class="post-footer">
       
 
@@ -1628,11 +1656,10 @@ HTTPS可以说是HTTP的一个强化版本，加强的部分主要是对于传�
             </div>
           
 
-
-
-          <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=27591663&auto=1&height=66"></iframe>
-
-
+          <link rel="stylesheet" href="/dist/APlayer.min.css">
+          <div id="aplayer"></div>
+          <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+          <script type="text/javascript" src="/dist/music.js"></script>
 
 
           
@@ -1724,6 +1751,8 @@ HTTPS可以说是HTTP的一个强化版本，加强的部分主要是对于传�
     
       <div class="back-to-top">
         <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
         
       </div>
     
