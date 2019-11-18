@@ -1,1 +1,314 @@
-<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><script src="/lib/pace/pace.min.js?v=1.0.2"></script><link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/images/hugo.jpeg?v=5.1.4"><link rel="icon" type="image/png" sizes="32x32" href="/images/hugo.jpeg?v=5.1.4"><link rel="icon" type="image/png" sizes="16x16" href="/images/hugo.jpeg?v=5.1.4"><link rel="mask-icon" href="/images/hugo.jpegg?v=5.1.4" color="#222"><meta name="keywords" content="socketio,websocket,"><meta name="description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。"><meta name="keywords" content="socketio,websocket"><meta property="og:type" content="article"><meta property="og:title" content="flask_socketio深入探究"><meta property="og:url" content="http://blog.magicyu.cn/flask-socketio/index.html"><meta property="og:site_name" content="Hugo的自由广场"><meta property="og:description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。"><meta property="og:locale" content="zh-Hans"><meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/1.jpg"><meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/3.png"><meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/2.png"><meta property="og:updated_time" content="2019-05-05T12:00:30.000Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="flask_socketio深入探究"><meta name="twitter:description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。"><meta name="twitter:image" content="http://blog.magicyu.cn/flask-socketio/1.jpg"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"5.1.4",sidebar:{position:"left",display:"hide",offset:12,b2t:!1,scrollpercent:!0,onmobile:!1},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://blog.magicyu.cn/flask-socketio/"><title>flask_socketio深入探究 | Hugo的自由广场</title></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><a href="https://github.com/magicyu90/" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513;color:#fff;position:absolute;top:0;border:0;right:0" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">Hugo的自由广场</span> <span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">Stay Hungry Stay Foolish</p></div><div class="site-nav-toggle"><button><span class="btn-bar"></span> <span class="btn-bar"></span> <span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li></ul></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/flask-socketio/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="育子"><meta itemprop="description" content><meta itemprop="image" content="/images/avatar.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="Hugo的自由广场"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">flask_socketio深入探究</h1><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-04T17:04:56+08:00">2019-05-04 </time></span><span class="post-category"><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-folder-o"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span> </a></span></span><span class="post-meta-divider">|</span> <span class="page-pv"><i class="fa fa-file-o"></i> <span class="busuanzi-value" id="busuanzi_value_page_pv"></span></span><div class="post-wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i> </span><span class="post-meta-item-text">字数统计&#58;</span> <span title="字数统计">1.3k字 </span><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">4 分钟</span></div></div></header><div class="post-body" itemprop="articleBody"><p>在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。</p><a id="more"></a><p>flask-socketio是flask技术栈中关于WebSocket的解决方案，<a href="https://zh.wikipedia.org/wiki/WebSocket" target="_blank" rel="noopener">WebSocket</a>是一种在单个TCP连接上进行全双工通信的协议，它帮助客户端与服务器之间建立稳定的长连接会话，传递消息。本次不涉及WebSocket的深入探讨，主要想分享写flask-socketio的实践经验。</p><h3 id="部署方式"><a href="#部署方式" class="headerlink" title="部署方式"></a>部署方式</h3><p>项目初期，flask-socketio是通过gunicorn(单工作者)+nginx+supervisor的方式进行部署，nginx使用ip_hash的方式进行负载均衡。有一次在和同事聊天过程中，讨论到基于ip_hash的方式可能对于在互联网上进行访问的话效果不好，没法做到真正的负载均衡，设想下，一个局域网内有若干台客户端访问服务器，如果基于ip_hash的话，nginx很可能将这些客户端都指向同一台服务器，因为他们的公网ip是一样的。访问过程如下：</p><p>192.168.0.101(用户电脑ip)-&gt;192.168.0.1/116.1.2.3(路由器的局域网ip及路由器得到的电信公网ip)–&gt;119.147.19.234(负载均衡的nginx服务器)–&gt;192.168.126.127(业务应用服务器)。</p><p>为了做到真正的负载均衡，因此将目前项目中nginx的ip_hash方式替换为nginx-sticky-module，sticky就是基于cookie的一种负载均衡解决方案，通过cookie实现客户端与后端服务器的会话保持, 在一定条件下可以保证同一个客户端访问的都是同一个后端服务器。请求来了，服务器发个cookie，并说：下次来带上，直接来找我。该模块支持粘性会话的同时(客户端保持和同一台服务器进行会话访问)可以做到水平扩展。</p><p>理想的flask-socketio架构图：</p><img src="/flask-socketio/1.jpg" title="架构图"><p>它可以保证即使在同一个局域网内的计算机，也可以访问不同的应用服务器，方便以后进行水平扩展。在这里注意的是，在使用gunicorn进行部署的时候，由于gunicorn多工作者(workers)不支持粘性会话，因此运行gunicorn时候确保只有一个工作者启用，启动命令如下:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gunicorn --worker-class eventlet -w 1 module:app</span><br></pre></td></tr></table></figure><p>参考架构图，我们使用的部署方式是nginx作为负载平衡器，使用nginx-sticky(基于cookie)路由，在每一个应用服务器上都运行一个gunicorn进程，每个gunicorn进行使用<strong>单worker</strong>启动。</p><p>在架构图中，可以看到多个应用服务器之间是通过rabbitmq中转的，这是由于每台服务器只拥有客户端连接的一部分，当某一台服务器要进行广播时，有些客户端却连接到了另一台服务器，换句话说服务器只能发送消息给连接到自身服务器的客户端，如果要广播到其他服务器所连接的客户端的话，需要通过rabbitmq或者redis进行中转和协调。</p><p>在使用rabbitmq部署之后，会发现rabbitmq控制面板中会出现应用服务器对应的队列，说明flask-socketio应用服务器之间通过rabbitmq通信来实现跨服务器广播等操作。</p><img src="/flask-socketio/3.png" title="rabbitmq"><p>使用消息队列时，还需要安装其他依赖项：</p><ul><li>对于Redis，必须安装软件包redis（pip install redis）。</li><li>对于RabbitMQ，必须安装软件包kombu（pip install kombu）。</li><li>对于Kombu支持的其他消息队列，请参阅Kombu文档以了解需要哪些依赖关系。</li><li>如果使用eventlet或gevent，那么通常需要修补Python标准库来强制消息队列包使用协程友好的函数和类。</li></ul><h3 id="socketio中namespace和room"><a href="#socketio中namespace和room" class="headerlink" title="socketio中namespace和room"></a>socketio中namespace和room</h3><p>namespace 和room的概念其实用来同一个服务端socket多路复用的。namespace，room和socketio的关系如下。socket会属于某一个room，如果没有指定，那么会有一个default的room。这个room又会属于某个namespace，如果没有指定，那么就是默认的namespace /。</p><p>客户端连接时指定自己属于哪个namespace。服务端看到namespace就会把这个socket加入指定的namespace。socketio广播时以namespace为单位，如果广播给某个room的话需要额外指定room的名字。</p><p>对于namespace和room的概念，如图： <img src="/flask-socketio/2.png" title="namespace和room"></p><h3 id="外部使用"><a href="#外部使用" class="headerlink" title="外部使用"></a>外部使用</h3><p>在项目开发过程中，也对在非flask-socketio项目外发布消息进行了使用，这意味着有的时候我们可以直接emit消息通过一个非socketio服务应用，socketio服务应用需要建立flask实例，并把该实例传入socketio构造函数中，类似这样:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app = Flask(&quot;EMDP_WS&quot;)</span><br><span class="line">socketio = SocketIO(app, async_mode=&quot;eventlet&quot;)</span><br></pre></td></tr></table></figure><p>对于在外部使用socketio发布消息，可以通过rabbitmq或者redis进行消息中转，需要指定<strong>message_queue</strong>参数，参考官网如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">socketio = SocketIO(message_queue=&apos;redis://&apos;)</span><br><span class="line">socketio.emit(&apos;my event&apos;, &#123;&apos;data&apos;: &apos;foo&apos;&#125;, namespace=&apos;/test&apos;)</span><br></pre></td></tr></table></figure><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><hr><ul><li><a href="https://blog.csdn.net/yu870646595/article/details/52056340" target="_blank" rel="noopener">Nginx Sticky的使用及踩过的坑（nginx-sticky-module）</a></li><li><a href="https://inkgenius.github.io/flak-SocketIO%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/" target="_blank" rel="noopener">flask-socketio 项目部署</a></li><li><a href="https://blog.csdn.net/lijiecong/article/details/50781417" target="_blank" rel="noopener">socket.io 中namespace 和 room的概念。</a></li></ul></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------　　　　本文结束　<i class="fa fa-heart"></i>　感谢您的阅读　　　　-------------</div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/socketio/" rel="tag"><i class="fa fa-tag"></i> socketio</a> <a href="/tags/websocket/" rel="tag"><i class="fa fa-tag"></i> websocket</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/视频/" rel="next" title="直播（一）"><i class="fa fa-chevron-left"></i> 直播（一）</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/pandas-learn/" rel="prev" title="Pandas使用 (一)">Pandas使用 (一) <i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div><div class="comments" id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC80NzU4Ny8yNDA4Nw=="></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap">站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="育子"><p class="site-author-name" itemprop="name">育子</p><p class="site-description motion-element" itemprop="description">有一颗写手之心的IT文艺青年</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives"><span class="site-state-item-count">14</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/index.html"><span class="site-state-item-count">7</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/index.html"><span class="site-state-item-count">14</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/magicyu90" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a> </span><span class="links-of-author-item"><a href="http://www.weibo.com/1677555284" target="_blank" title="微博"><i class="fa fa-fw fa-weibo"></i>微博</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/yu.shen.5872" target="_blank" title="Facebook"><i class="fa fa-fw fa-facebook"></i>Facebook</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-globe"></i> 友情链接</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://shady-xia.github.iohex" title="豪杰" target="_blank">豪杰</a></li></ul></div><link rel="stylesheet" href="/dist/APlayer.min.css"><div id="aplayer"></div><script type="text/javascript" src="/dist/APlayer.min.js"></script><script type="text/javascript" src="/dist/music.js"></script></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#部署方式"><span class="nav-number">1.</span> <span class="nav-text">部署方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socketio中namespace和room"><span class="nav-number">2.</span> <span class="nav-text">socketio中namespace和room</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#外部使用"><span class="nav-number">3.</span> <span class="nav-text">外部使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div class="copyright">&copy; <span itemprop="copyrightYear">2019</span> <span class="with-love"><i class="fa fa-user"></i> </span><span class="author" itemprop="copyrightHolder">育子</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-area-chart"></i> </span><span class="post-meta-item-text">网站字数&#58;</span> <span title="网站字数">19.9k</span></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="site-uv"><i class="fa fa-user"></i> <span class="busuanzi-value" id="busuanzi_value_site_uv"></span> </span><span class="site-pv"><i class="fa fa-eye"></i> <span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span id="scrollpercent"><span>0</span>%</span></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js"></script><script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><script type="text/javascript">!function(e,t){var n,c=e.getElementsByTagName(t)[0];"function"!=typeof LivereTower&&((n=e.createElement(t)).src="https://cdn-city.livere.com/js/embed.dist.js",n.async=!0,c.parentNode.insertBefore(n,c))}(document,"script")</script></body></html>
+<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><script src="/lib/pace/pace.min.js?v=1.0.2"></script><link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/images/hugo.jpeg?v=5.1.4"><link rel="icon" type="image/png" sizes="32x32" href="/images/hugo.jpeg?v=5.1.4"><link rel="icon" type="image/png" sizes="16x16" href="/images/hugo.jpeg?v=5.1.4"><link rel="mask-icon" href="/images/hugo.jpegg?v=5.1.4" color="#222"><meta name="keywords" content="socketio,websocket,"><meta name="description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。"><meta name="keywords" content="socketio,websocket"><meta property="og:type" content="article"><meta property="og:title" content="flask_socketio深入探究"><meta property="og:url" content="http://blog.magicyu.cn/flask-socketio/index.html"><meta property="og:site_name" content="Hugo的自由广场"><meta property="og:description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。"><meta property="og:locale" content="zh-Hans"><meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/1.jpg"><meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/3.png"><meta property="og:image" content="http://blog.magicyu.cn/flask-socketio/2.png"><meta property="og:updated_time" content="2019-05-05T12:00:30.000Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="flask_socketio深入探究"><meta name="twitter:description" content="在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。"><meta name="twitter:image" content="http://blog.magicyu.cn/flask-socketio/1.jpg"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"5.1.4",sidebar:{position:"left",display:"hide",offset:12,b2t:!1,scrollpercent:!0,onmobile:!1},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://blog.magicyu.cn/flask-socketio/"><title>flask_socketio深入探究 | Hugo的自由广场</title></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><a href="https://github.com/magicyu90/" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513;color:#fff;position:absolute;top:0;border:0;right:0" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">Hugo的自由广场</span> <span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">Stay Hungry Stay Foolish</p></div><div class="site-nav-toggle"><button><span class="btn-bar"></span> <span class="btn-bar"></span> <span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i> </span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"><input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://blog.magicyu.cn/flask-socketio/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="育子"><meta itemprop="description" content><meta itemprop="image" content="/images/avatar.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="Hugo的自由广场"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">flask_socketio深入探究</h1><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-04T17:04:56+08:00">2019-05-04 </time></span><span class="post-category"><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-folder-o"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span> </a></span></span><span class="post-meta-divider">|</span> <span class="page-pv"><i class="fa fa-file-o"></i> <span class="busuanzi-value" id="busuanzi_value_page_pv"></span></span><div class="post-wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i> </span><span class="post-meta-item-text">字数统计&#58;</span> <span title="字数统计">1.3k字 </span><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">4 分钟</span></div></div></header><div class="post-body" itemprop="articleBody"><p>在开发的项目中使用flask作为后台主要技术栈，对于WebSocket来说使用的是flask-socketio，今天我们一起深入探究下，flask-socketio的部署方式、使用过程中的发现的一些有趣的用法。</p><a id="more"></a><p>flask-socketio是flask技术栈中关于WebSocket的解决方案，<a href="https://zh.wikipedia.org/wiki/WebSocket" target="_blank" rel="noopener">WebSocket</a>是一种在单个TCP连接上进行全双工通信的协议，它帮助客户端与服务器之间建立稳定的长连接会话，传递消息。本次不涉及WebSocket的深入探讨，主要想分享写flask-socketio的实践经验。</p><h3 id="部署方式"><a href="#部署方式" class="headerlink" title="部署方式"></a>部署方式</h3><p>项目初期，flask-socketio是通过gunicorn(单工作者)+nginx+supervisor的方式进行部署，nginx使用ip_hash的方式进行负载均衡。有一次在和同事聊天过程中，讨论到基于ip_hash的方式可能对于在互联网上进行访问的话效果不好，没法做到真正的负载均衡，设想下，一个局域网内有若干台客户端访问服务器，如果基于ip_hash的话，nginx很可能将这些客户端都指向同一台服务器，因为他们的公网ip是一样的。访问过程如下：</p><p>192.168.0.101(用户电脑ip)-&gt;192.168.0.1/116.1.2.3(路由器的局域网ip及路由器得到的电信公网ip)–&gt;119.147.19.234(负载均衡的nginx服务器)–&gt;192.168.126.127(业务应用服务器)。</p><p>为了做到真正的负载均衡，因此将目前项目中nginx的ip_hash方式替换为nginx-sticky-module，sticky就是基于cookie的一种负载均衡解决方案，通过cookie实现客户端与后端服务器的会话保持, 在一定条件下可以保证同一个客户端访问的都是同一个后端服务器。请求来了，服务器发个cookie，并说：下次来带上，直接来找我。该模块支持粘性会话的同时(客户端保持和同一台服务器进行会话访问)可以做到水平扩展。</p><p>理想的flask-socketio架构图：</p><img src="/flask-socketio/1.jpg" title="架构图"><p>它可以保证即使在同一个局域网内的计算机，也可以访问不同的应用服务器，方便以后进行水平扩展。在这里注意的是，在使用gunicorn进行部署的时候，由于gunicorn多工作者(workers)不支持粘性会话，因此运行gunicorn时候确保只有一个工作者启用，启动命令如下:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gunicorn --worker-class eventlet -w 1 module:app</span><br></pre></td></tr></table></figure><p>参考架构图，我们使用的部署方式是nginx作为负载平衡器，使用nginx-sticky(基于cookie)路由，在每一个应用服务器上都运行一个gunicorn进程，每个gunicorn进行使用<strong>单worker</strong>启动。</p><p>在架构图中，可以看到多个应用服务器之间是通过rabbitmq中转的，这是由于每台服务器只拥有客户端连接的一部分，当某一台服务器要进行广播时，有些客户端却连接到了另一台服务器，换句话说服务器只能发送消息给连接到自身服务器的客户端，如果要广播到其他服务器所连接的客户端的话，需要通过rabbitmq或者redis进行中转和协调。</p><p>在使用rabbitmq部署之后，会发现rabbitmq控制面板中会出现应用服务器对应的队列，说明flask-socketio应用服务器之间通过rabbitmq通信来实现跨服务器广播等操作。</p><img src="/flask-socketio/3.png" title="rabbitmq"><p>使用消息队列时，还需要安装其他依赖项：</p><ul><li>对于Redis，必须安装软件包redis（pip install redis）。</li><li>对于RabbitMQ，必须安装软件包kombu（pip install kombu）。</li><li>对于Kombu支持的其他消息队列，请参阅Kombu文档以了解需要哪些依赖关系。</li><li>如果使用eventlet或gevent，那么通常需要修补Python标准库来强制消息队列包使用协程友好的函数和类。</li></ul><h3 id="socketio中namespace和room"><a href="#socketio中namespace和room" class="headerlink" title="socketio中namespace和room"></a>socketio中namespace和room</h3><p>namespace 和room的概念其实用来同一个服务端socket多路复用的。namespace，room和socketio的关系如下。socket会属于某一个room，如果没有指定，那么会有一个default的room。这个room又会属于某个namespace，如果没有指定，那么就是默认的namespace /。</p><p>客户端连接时指定自己属于哪个namespace。服务端看到namespace就会把这个socket加入指定的namespace。socketio广播时以namespace为单位，如果广播给某个room的话需要额外指定room的名字。</p><p>对于namespace和room的概念，如图： <img src="/flask-socketio/2.png" title="namespace和room"></p><h3 id="外部使用"><a href="#外部使用" class="headerlink" title="外部使用"></a>外部使用</h3><p>在项目开发过程中，也对在非flask-socketio项目外发布消息进行了使用，这意味着有的时候我们可以直接emit消息通过一个非socketio服务应用，socketio服务应用需要建立flask实例，并把该实例传入socketio构造函数中，类似这样:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app = Flask(&quot;EMDP_WS&quot;)</span><br><span class="line">socketio = SocketIO(app, async_mode=&quot;eventlet&quot;)</span><br></pre></td></tr></table></figure><p>对于在外部使用socketio发布消息，可以通过rabbitmq或者redis进行消息中转，需要指定<strong>message_queue</strong>参数，参考官网如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">socketio = SocketIO(message_queue=&apos;redis://&apos;)</span><br><span class="line">socketio.emit(&apos;my event&apos;, &#123;&apos;data&apos;: &apos;foo&apos;&#125;, namespace=&apos;/test&apos;)</span><br></pre></td></tr></table></figure><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><hr><ul><li><a href="https://blog.csdn.net/yu870646595/article/details/52056340" target="_blank" rel="noopener">Nginx Sticky的使用及踩过的坑（nginx-sticky-module）</a></li><li><a href="https://inkgenius.github.io/flak-SocketIO%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/" target="_blank" rel="noopener">flask-socketio 项目部署</a></li><li><a href="https://blog.csdn.net/lijiecong/article/details/50781417" target="_blank" rel="noopener">socket.io 中namespace 和 room的概念。</a></li></ul></div><div><div><div style="text-align:center;color:#ccc;font-size:14px">-------------　　　　本文结束　<i class="fa fa-heart"></i>　感谢您的阅读　　　　-------------</div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/socketio/" rel="tag"><i class="fa fa-tag"></i> socketio</a> <a href="/tags/websocket/" rel="tag"><i class="fa fa-tag"></i> websocket</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/视频/" rel="next" title="直播（一）"><i class="fa fa-chevron-left"></i> 直播（一）</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/pandas-learn/" rel="prev" title="Pandas使用 (一)">Pandas使用 (一) <i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div><div class="comments" id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC80NzU4Ny8yNDA4Nw=="></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap">站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="育子"><p class="site-author-name" itemprop="name">育子</p><p class="site-description motion-element" itemprop="description">有一颗写手之心的IT文艺青年</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives"><span class="site-state-item-count">14</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/index.html"><span class="site-state-item-count">7</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/index.html"><span class="site-state-item-count">14</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/magicyu90" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a> </span><span class="links-of-author-item"><a href="http://www.weibo.com/1677555284" target="_blank" title="微博"><i class="fa fa-fw fa-weibo"></i>微博</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/yu.shen.5872" target="_blank" title="Facebook"><i class="fa fa-fw fa-facebook"></i>Facebook</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-globe"></i> 友情链接</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://shady-xia.github.iohex" title="豪杰" target="_blank">豪杰</a></li></ul></div><link rel="stylesheet" href="/dist/APlayer.min.css"><div id="aplayer"></div><script type="text/javascript" src="/dist/APlayer.min.js"></script><script type="text/javascript" src="/dist/music.js"></script></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#部署方式"><span class="nav-number">1.</span> <span class="nav-text">部署方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socketio中namespace和room"><span class="nav-number">2.</span> <span class="nav-text">socketio中namespace和room</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#外部使用"><span class="nav-number">3.</span> <span class="nav-text">外部使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div class="copyright">&copy; <span itemprop="copyrightYear">2019</span> <span class="with-love"><i class="fa fa-user"></i> </span><span class="author" itemprop="copyrightHolder">育子</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-area-chart"></i> </span><span class="post-meta-item-text">网站字数&#58;</span> <span title="网站字数">19.9k</span></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="site-uv"><i class="fa fa-user"></i> <span class="busuanzi-value" id="busuanzi_value_site_uv"></span> </span><span class="site-pv"><i class="fa fa-eye"></i> <span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span id="scrollpercent"><span>0</span>%</span></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js"></script><script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><script type="text/javascript">!function(e,t){var n,c=e.getElementsByTagName(t)[0];"function"!=typeof LivereTower&&((n=e.createElement(t)).src="https://cdn-city.livere.com/js/embed.dist.js",n.async=!0,c.parentNode.insertBefore(n,c))}(document,"script")</script><script type="text/javascript">// Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });</script></body></html>
